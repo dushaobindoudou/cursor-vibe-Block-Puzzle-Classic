@@ -3,8 +3,11 @@
 > 现代化的方块拼图游戏，采用 TypeScript + PIXI.js 开发，支持全平台移动端优化
 
 [![游戏演示视频](https://img.shields.io/badge/🎥_游戏演示-观看视频-red?style=for-the-badge)](https://youtu.be/coKHp3sY9ns)
+[![在线体验游戏](https://img.shields.io/badge/🎮_在线体验-立即游戏-blue?style=for-the-badge)](https://cursor-vibe-block-puzzle-classic.vercel.app/)
 
 ## 🎬 游戏演示
+
+**🎮 在线演示地址：** [https://cursor-vibe-block-puzzle-classic.vercel.app/](https://cursor-vibe-block-puzzle-classic.vercel.app/)
 
 **📺 完整游戏演示视频：** [https://youtu.be/coKHp3sY9ns](https://youtu.be/coKHp3sY9ns)
 
@@ -70,7 +73,8 @@ pnpm run lint
 ```
 
 ### 🌐 在线体验
-访问开发服务器地址（通常是 `http://localhost:5173`）即可开始游戏
+- **🎮 在线演示**：[https://cursor-vibe-block-puzzle-classic.vercel.app/](https://cursor-vibe-block-puzzle-classic.vercel.app/)
+- **💻 本地开发**：访问开发服务器地址（通常是 `http://localhost:5173`）
 
 ## 🎯 游戏模式详解
 
@@ -272,7 +276,7 @@ src/
 **🎮 享受游戏，挑战自我！🏆**
 
 [![游戏演示](https://img.shields.io/badge/🎥_观看演示-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/coKHp3sY9ns)
-[![开始游戏](https://img.shields.io/badge/🎮_开始游戏-立即体验-blue?style=for-the-badge)](.)
-[![GitHub Stars](https://img.shields.io/github/stars/your-username/block-puzzle-game?style=for-the-badge&logo=github)](https://github.com/your-username/block-puzzle-game)
+[![在线体验](https://img.shields.io/badge/🎮_在线体验-立即游戏-blue?style=for-the-badge)](https://cursor-vibe-block-puzzle-classic.vercel.app//)
+[![GitHub Stars](https://img.shields.io/github/stars/dushaobindoudou/cursor-vibe-Block-Puzzle-Classic?style=for-the-badge&logo=github)](https://github.com/dushaobindoudou/cursor-vibe-Block-Puzzle-Classic)
 
 </div> 
