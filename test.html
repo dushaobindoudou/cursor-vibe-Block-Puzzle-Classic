@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Block Shapes Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #111;
+            color: #fff;
+            padding: 20px;
+        }
+        .block-container {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #333;
+            background: #222;
+        }
+        .block-grid {
+            display: grid;
+            gap: 1px;
+            margin: 10px 0;
+        }
+        .cell {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #333;
+        }
+        .filled {
+            background: #00d4ff;
+        }
+        h3 {
+            color: #00d4ff;
+            margin: 5px 0;
+        }
+        .rarity {
+            color: #ff6b6b;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧩 Block Puzzle - 新增复杂方块形状预览</h1>
+    
+    <h2>五格方块（Pentomino）</h2>
+    <div id="pentomino-blocks"></div>
+    
+    <h2>大型方块（6-9格）</h2>
+    <div id="large-blocks"></div>
+    
+    <h2>特殊形状</h2>
+    <div id="special-blocks"></div>
+
+    <script>
+        // 方块形状定义（从 BlockShapes.ts 复制）
+        const complexShapes = [
+            // 五格方块
+            {
+                name: 'P形五格', pattern: [[1, 1], [1, 1], [1, 0]], color: '#ff69b4', rarity: 4
+            },
+            {
+                name: 'U形五格', pattern: [[1, 0, 1], [1, 1, 1]], color: '#ffa500', rarity: 4
+            },
+            {
+                name: 'W形五格', pattern: [[1, 0, 0], [1, 1, 0], [0, 1, 1]], color: '#8a2be2', rarity: 4
+            },
+            {
+                name: 'Y形五格', pattern: [[0, 1], [1, 1], [0, 1], [0, 1]], color: '#20b2aa', rarity: 4
+            },
+            {
+                name: 'X形五格', pattern: [[0, 1, 0], [1, 1, 1], [0, 1, 0]], color: '#dc143c', rarity: 4
+            },
+            {
+                name: 'N形五格', pattern: [[0, 1, 1, 1], [1, 1, 0, 0]], color: '#9acd32', rarity: 4
+            },
+            {
+                name: 'F形五格', pattern: [[0, 1, 1], [1, 1, 0], [0, 1, 0]], color: '#4169e1', rarity: 4
+            },
+            
+            // 大型方块
+            {
+                name: '大L形', pattern: [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0], [1, 1, 1, 1]], color: '#800000', rarity: 5
+            },
+            {
+                name: '巨型十字', pattern: [[0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [1, 1, 1, 1, 1], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0]], color: '#2f4f4f', rarity: 6
+            },
+            {
+                name: '3x3方形', pattern: [[1, 1, 1], [1, 1, 1], [1, 1, 1]], color: '#483d8b', rarity: 5
+            },
+            
+            // 特殊形状
+            {
+                name: '钻石五格', pattern: [[0, 1, 0], [1, 1, 1], [1, 0, 1]], color: '#00ced1', rarity: 4
+            },
+            {
+                name: '爪形五格', pattern: [[1, 0, 1], [1, 1, 1], [0, 1, 0]], color: '#ff1493', rarity: 4
+            },
+            {
+                name: '锯齿六格', pattern: [[1, 0, 1, 0], [1, 1, 1, 1], [0, 1, 0, 1]], color: '#cd853f', rarity: 5
+            }
+        ];
+
+        function createBlockDisplay(shape) {
+            const container = document.createElement('div');
+            container.className = 'block-container';
+            
+            const title = document.createElement('h3');
+            title.textContent = shape.name;
+            container.appendChild(title);
+            
+            const rarity = document.createElement('div');
+            rarity.className = 'rarity';
+            rarity.textContent = `稀有度: ${shape.rarity}`;
+            container.appendChild(rarity);
+            
+            const grid = document.createElement('div');
+            grid.className = 'block-grid';
+            grid.style.gridTemplateColumns = `repeat(${shape.pattern[0].length}, 22px)`;
+            grid.style.gridTemplateRows = `repeat(${shape.pattern.length}, 22px)`;
+            
+            for (let y = 0; y < shape.pattern.length; y++) {
+                for (let x = 0; x < shape.pattern[0].length; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    if (shape.pattern[y][x] === 1) {
+                        cell.classList.add('filled');
+                        cell.style.backgroundColor = shape.color;
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+            
+            container.appendChild(grid);
+            return container;
+        }
+
+        // 分类显示方块
+        const pentominoBlocks = complexShapes.filter(s => s.rarity === 4 && s.name.includes('五格'));
+        const largeBlocks = complexShapes.filter(s => s.rarity >= 5 || s.name.includes('大') || s.name.includes('巨'));
+        const specialBlocks = complexShapes.filter(s => !s.name.includes('五格') && !s.name.includes('大') && !s.name.includes('巨') && s.rarity === 4);
+
+        pentominoBlocks.forEach(shape => {
+            document.getElementById('pentomino-blocks').appendChild(createBlockDisplay(shape));
+        });
+
+        largeBlocks.forEach(shape => {
+            document.getElementById('large-blocks').appendChild(createBlockDisplay(shape));
+        });
+
+        specialBlocks.forEach(shape => {
+            document.getElementById('special-blocks').appendChild(createBlockDisplay(shape));
+        });
+    </script>
+</body>
+</html> 

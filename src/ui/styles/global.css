@@ -1,0 +1,137 @@
+/* 全局样式 - Geek风格 */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  /* 主色调 */
+  --primary-blue: #00d4ff;
+  --primary-green: #39ff14;
+  --primary-purple: #bf00ff;
+  
+  /* 背景色 */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  
+  /* 文本色 */
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-accent: #00d4ff;
+  
+  /* 边框和阴影 */
+  --border-color: #333333;
+  --glow-blue: 0 0 10px var(--primary-blue);
+  --glow-green: 0 0 10px var(--primary-green);
+  --glow-purple: 0 0 10px var(--primary-purple);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+  background: linear-gradient(45deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  user-select: none;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+/* 通用按钮样式 */
+.btn {
+  background: transparent;
+  border: 1px solid var(--primary-blue);
+  color: var(--primary-blue);
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn:hover {
+  background: var(--primary-blue);
+  color: var(--bg-primary);
+  box-shadow: var(--glow-blue);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* 输入框样式 */
+.input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--primary-blue);
+  box-shadow: var(--glow-blue);
+}
+
+/* 面板样式 */
+.panel {
+  background: rgba(26, 26, 26, 0.9);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  border-radius: 4px;
+}
+
+/* 文本发光效果 */
+.text-glow {
+  text-shadow: var(--glow-blue);
+}
+
+.text-glow-green {
+  text-shadow: var(--glow-green);
+}
+
+.text-glow-purple {
+  text-shadow: var(--glow-purple);
+}
+
+/* 动画类 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+} 

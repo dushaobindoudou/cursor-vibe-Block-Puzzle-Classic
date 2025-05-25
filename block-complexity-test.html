@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>方块复杂度测试</title>
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #00d4ff;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+        .difficulty-section {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid #39ff14;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .difficulty-title {
+            color: #39ff14;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .level-tests {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .level-test {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .level-header {
+            color: #00d4ff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .block-samples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .block-sample {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 4px;
+            min-width: 60px;
+            text-align: center;
+            font-size: 0.8em;
+        }
+        .rarity-1 { border-color: #39ff14; color: #39ff14; }
+        .rarity-2 { border-color: #00d4ff; color: #00d4ff; }
+        .rarity-3 { border-color: #ffff00; color: #ffff00; }
+        .rarity-4 { border-color: #ff8800; color: #ff8800; }
+        .rarity-5 { border-color: #ff4444; color: #ff4444; }
+        .rarity-6 { border-color: #8000ff; color: #8000ff; }
+        .stats {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .improvement-box {
+            background: rgba(57, 255, 20, 0.1);
+            border: 2px solid #39ff14;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .improvement-title {
+            color: #39ff14;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        .improvement-list {
+            list-style: none;
+            padding: 0;
+        }
+        .improvement-list li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .improvement-list li:before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+            color: #39ff14;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 方块复杂度改进测试</h1>
+        
+        <div class="improvement-box">
+            <div class="improvement-title">🎯 修复内容</div>
+            <ul class="improvement-list">
+                <li><strong>修复重新生成逻辑</strong> - 候选方块用完后重新生成时现在也会考虑难度加成</li>
+                <li><strong>增强难度设置</strong> - 调整了各难度的blockComplexityBonus值</li>
+                <li><strong>优化方块分布</strong> - 改进了根据level获取方块的逻辑</li>
+                <li><strong>改进权重系统</strong> - 高难度下复杂方块出现概率大幅提升</li>
+                <li><strong>特殊奖励机制</strong> - 最高难度时巨型方块权重额外提升</li>
+            </ul>
+        </div>
+
+        <div class="difficulty-section">
+            <div class="difficulty-title">🌱 简单难度（blockComplexityBonus: -1）</div>
+            <div class="level-tests">
+                <div class="level-test">
+                    <div class="level-header">实际Level: 0</div>
+                    <div class="block-samples" id="easy-samples"></div>
+                    <div class="stats" id="easy-stats"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="difficulty-section">
+            <div class="difficulty-title">⚖️ 普通难度（blockComplexityBonus: 0）</div>
+            <div class="level-tests">
+                <div class="level-test">
+                    <div class="level-header">实际Level: 1</div>
+                    <div class="block-samples" id="normal-samples"></div>
+                    <div class="stats" id="normal-stats"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="difficulty-section">
+            <div class="difficulty-title">🔥 困难难度（blockComplexityBonus: 2）</div>
+            <div class="level-tests">
+                <div class="level-test">
+                    <div class="level-header">实际Level: 3</div>
+                    <div class="block-samples" id="hard-samples"></div>
+                    <div class="stats" id="hard-stats"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="difficulty-section">
+            <div class="difficulty-title">💀 专家难度（blockComplexityBonus: 3）</div>
+            <div class="level-tests">
+                <div class="level-test">
+                    <div class="level-header">实际Level: 4</div>
+                    <div class="block-samples" id="expert-samples"></div>
+                    <div class="stats" id="expert-stats"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="difficulty-section">
+            <div class="difficulty-title">👹 噩梦难度（blockComplexityBonus: 4）</div>
+            <div class="level-tests">
+                <div class="level-test">
+                    <div class="level-header">实际Level: 6</div>
+                    <div class="block-samples" id="nightmare-samples"></div>
+                    <div class="stats" id="nightmare-stats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟BlockShapes类的简化版本
+        const blockShapes = [
+            // 稀有度1：1-2格方块
+            { name: '单格', rarity: 1, size: 1 },
+            { name: '双格H', rarity: 1, size: 2 },
+            { name: '双格V', rarity: 1, size: 2 },
+            
+            // 稀有度2：3格方块
+            { name: '三格H', rarity: 2, size: 3 },
+            { name: '三格V', rarity: 2, size: 3 },
+            { name: 'L形3-1', rarity: 2, size: 3 },
+            { name: 'L形3-2', rarity: 2, size: 3 },
+            
+            // 稀有度3：经典俄罗斯方块
+            { name: 'I形', rarity: 3, size: 4 },
+            { name: 'O形', rarity: 3, size: 4 },
+            { name: 'T形', rarity: 3, size: 4 },
+            { name: 'L形', rarity: 3, size: 4 },
+            { name: 'J形', rarity: 3, size: 4 },
+            { name: 'S形', rarity: 3, size: 4 },
+            { name: 'Z形', rarity: 3, size: 4 },
+            
+            // 稀有度4：五格方块(Pentomino)
+            { name: 'P形五格', rarity: 4, size: 5 },
+            { name: 'U形五格', rarity: 4, size: 5 },
+            { name: 'W形五格', rarity: 4, size: 5 },
+            { name: 'Y形五格', rarity: 4, size: 5 },
+            { name: 'X形五格', rarity: 4, size: 5 },
+            { name: 'N形五格', rarity: 4, size: 5 },
+            { name: 'F形五格', rarity: 4, size: 5 },
+            { name: '大十字', rarity: 4, size: 5 },
+            { name: '钻石五格', rarity: 4, size: 5 },
+            { name: '爪形五格', rarity: 4, size: 5 },
+            { name: '五格直线', rarity: 4, size: 5 },
+            
+            // 稀有度5：大型方块
+            { name: '角形六格', rarity: 5, size: 6 },
+            { name: '阶梯六格', rarity: 5, size: 6 },
+            { name: '大L形', rarity: 5, size: 7 },
+            { name: '六格直线', rarity: 5, size: 6 },
+            { name: '3x3方形', rarity: 5, size: 9 },
+            { name: '锯齿六格', rarity: 5, size: 6 },
+            
+            // 稀有度6：巨型方块
+            { name: '巨型十字', rarity: 6, size: 9 }
+        ];
+
+        function getShapesByDifficulty(level) {
+            if (level <= 0) {
+                return blockShapes.filter(shape => shape.rarity === 1 && shape.size === 1);
+            } else if (level <= 1) {
+                return blockShapes.filter(shape => shape.rarity <= 1);
+            } else if (level <= 2) {
+                return blockShapes.filter(shape => shape.rarity <= 2);
+            } else if (level <= 3) {
+                return blockShapes.filter(shape => shape.rarity <= 3);
+            } else if (level <= 4) {
+                return blockShapes.filter(shape => shape.rarity <= 4);
+            } else if (level <= 5) {
+                return blockShapes.filter(shape => shape.rarity <= 5);
+            } else {
+                return blockShapes;
+            }
+        }
+
+        function getRandomShape(level) {
+            const availableShapes = getShapesByDifficulty(level);
+            
+            const weights = availableShapes.map(shape => {
+                const baseWeight = 8 - shape.rarity;
+                
+                let levelBonus = 0;
+                if (level >= 3) {
+                    levelBonus = Math.min(4, Math.floor((level - 2) * 1.5));
+                    
+                    if (shape.rarity >= 4) {
+                        levelBonus += Math.min(3, level - 3);
+                    }
+                    if (shape.rarity >= 5) {
+                        levelBonus += Math.min(2, level - 4);
+                    }
+                    if (shape.rarity >= 6) {
+                        levelBonus += Math.min(2, level - 5);
+                    }
+                }
+                
+                if (level >= 6 && shape.rarity >= 5) {
+                    levelBonus += 3;
+                }
+                
+                return Math.max(1, baseWeight + levelBonus);
+            });
+            
+            const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (let i = 0; i < availableShapes.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    return availableShapes[i];
+                }
+            }
+            
+            return availableShapes[availableShapes.length - 1];
+        }
+
+        function testDifficulty(level, containerId, statsId) {
+            const samples = [];
+            const rarityCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+            
+            // 生成100个样本
+            for (let i = 0; i < 100; i++) {
+                const shape = getRandomShape(level);
+                samples.push(shape);
+                rarityCount[shape.rarity]++;
+            }
+            
+            // 显示前20个样本
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            samples.slice(0, 20).forEach(shape => {
+                const div = document.createElement('div');
+                div.className = `block-sample rarity-${shape.rarity}`;
+                div.textContent = `${shape.name} (${shape.size})`;
+                div.title = `稀有度: ${shape.rarity}, 大小: ${shape.size}格`;
+                container.appendChild(div);
+            });
+            
+            // 显示统计信息
+            const statsContainer = document.getElementById(statsId);
+            const total = samples.length;
+            statsContainer.innerHTML = `
+                <div>总样本: ${total}</div>
+                <div>稀有度1: ${rarityCount[1]} (${(rarityCount[1]/total*100).toFixed(1)}%)</div>
+                <div>稀有度2: ${rarityCount[2]} (${(rarityCount[2]/total*100).toFixed(1)}%)</div>
+                <div>稀有度3: ${rarityCount[3]} (${(rarityCount[3]/total*100).toFixed(1)}%)</div>
+                <div>稀有度4: ${rarityCount[4]} (${(rarityCount[4]/total*100).toFixed(1)}%)</div>
+                <div>稀有度5: ${rarityCount[5]} (${(rarityCount[5]/total*100).toFixed(1)}%)</div>
+                <div>稀有度6: ${rarityCount[6]} (${(rarityCount[6]/total*100).toFixed(1)}%)</div>
+                <div style="color: #39ff14; margin-top: 10px;">
+                    复杂方块(4+): ${rarityCount[4] + rarityCount[5] + rarityCount[6]} 
+                    (${((rarityCount[4] + rarityCount[5] + rarityCount[6])/total*100).toFixed(1)}%)
+                </div>
+            `;
+        }
+
+        // 页面加载时运行测试
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧪 测试方块复杂度分布...');
+            
+            // 测试各个难度对应的实际level
+            testDifficulty(0, 'easy-samples', 'easy-stats');      // 简单: 1 + (-1) = 0
+            testDifficulty(1, 'normal-samples', 'normal-stats');   // 普通: 1 + 0 = 1  
+            testDifficulty(3, 'hard-samples', 'hard-stats');       // 困难: 1 + 2 = 3
+            testDifficulty(4, 'expert-samples', 'expert-stats');   // 专家: 1 + 3 = 4
+            testDifficulty(6, 'nightmare-samples', 'nightmare-stats'); // 噩梦: 2 + 4 = 6
+
+            console.log('✅ 方块复杂度测试完成');
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Block Puzzle Classic</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(45deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #app {
+      text-align: center;
+    }
+    .loading {
+      color: #00d4ff;
+      text-shadow: 0 0 10px #00d4ff;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00d4ff; }
+      to { text-shadow: 0 0 20px #00d4ff, 0 0 30px #00d4ff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="loading">INITIALIZING SYSTEM...</div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html> 

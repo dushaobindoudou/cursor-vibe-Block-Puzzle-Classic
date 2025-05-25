@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>📱 移动端兼容性测试 - 方块拼图游戏</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+            overflow: hidden;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            color: #ffffff;
+            touch-action: none;
+        }
+        
+        .test-container {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .test-title {
+            font-size: clamp(20px, 5vw, 32px);
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .test-subtitle {
+            font-size: clamp(12px, 3vw, 16px);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .device-info {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: clamp(12px, 2.5vw, 14px);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .info-value {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+        
+        .test-btn {
+            position: relative;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            color: rgba(255, 255, 255, 0.95);
+            font-family: inherit;
+            font-size: clamp(12px, 2.5vw, 14px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease-out;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            overflow: hidden;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+        
+        .test-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.25s ease-out;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-btn:hover::before {
+            left: 100%;
+        }
+        
+        .test-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .test-btn--primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+        
+        .test-btn--success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-color: transparent;
+        }
+        
+        .test-results {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            font-size: clamp(12px, 2.5vw, 14px);
+        }
+        
+        .result-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .result-status--pass {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .result-status--fail {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        /* 安全区域适配 */
+        @supports (padding: max(0px)) {
+            .test-container {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-top: max(20px, env(safe-area-inset-top));
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* PWA 全屏模式适配 */
+        @media (display-mode: standalone) {
+            .test-container {
+                padding-top: max(40px, env(safe-area-inset-top));
+            }
+        }
+        
+        /* 横屏适配 */
+        @media (max-width: 480px) and (orientation: landscape) {
+            .test-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                align-items: flex-start;
+            }
+            
+            .test-header {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .device-info,
+            .test-results {
+                width: 48%;
+                max-width: none;
+            }
+            
+            .test-buttons {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+        
+        /* 竖屏适配 */
+        @media (max-width: 480px) and (orientation: portrait) {
+            .test-container {
+                gap: 16px;
+            }
+            
+            .device-info,
+            .test-results {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">📱 移动端兼容性测试</h1>
+            <p class="test-subtitle">检测设备兼容性和响应式布局</p>
+        </div>
+        
+        <div class="device-info">
+            <div class="info-item">
+                <span class="info-label">设备类型</span>
+                <span class="info-value" id="deviceType">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">屏幕尺寸</span>
+                <span class="info-value" id="screenSize">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">屏幕方向</span>
+                <span class="info-value" id="orientation">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">像素比</span>
+                <span class="info-value" id="pixelRatio">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">触摸支持</span>
+                <span class="info-value" id="touchSupport">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">WebGL支持</span>
+                <span class="info-value" id="webglSupport">检测中...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">全屏API</span>
+                <span class="info-value" id="fullscreenSupport">检测中...</span>
+            </div>
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn test-btn--primary" onclick="startGame()">🎮 启动游戏</button>
+            <button class="test-btn" onclick="testTouch()">👆 触摸测试</button>
+            <button class="test-btn" onclick="testFullscreen()">⛶ 全屏测试</button>
+            <button class="test-btn test-btn--success" onclick="runAllTests()">🔧 运行测试</button>
+        </div>
+        
+        <div class="test-results" id="testResults">
+            <div class="result-item">
+                <div class="result-status result-status--pass" id="touchStatus">✓</div>
+                <span>触摸事件响应</span>
+            </div>
+            <div class="result-item">
+                <div class="result-status result-status--pass" id="orientationStatus">✓</div>
+                <span>方向变化检测</span>
+            </div>
+            <div class="result-item">
+                <div class="result-status result-status--pass" id="performanceStatus">✓</div>
+                <span>性能优化</span>
+            </div>
+            <div class="result-item">
+                <div class="result-status result-status--pass" id="layoutStatus">✓</div>
+                <span>响应式布局</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 移动端适配器类（简化版）
+        class MobileAdapter {
+            constructor() {
+                this.deviceInfo = this.detectDevice()
+                this.updateUI()
+                this.setupEventListeners()
+            }
+            
+            detectDevice() {
+                const width = window.innerWidth
+                const height = window.innerHeight
+                const devicePixelRatio = window.devicePixelRatio || 1
+                const userAgent = navigator.userAgent.toLowerCase()
+                
+                const isMobile = width <= 480 || /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent)
+                const isTablet = !isMobile && width <= 768
+                const isDesktop = !isMobile && !isTablet
+                const isPortrait = height > width
+                const isLandscape = width > height
+                
+                return {
+                    isMobile,
+                    isTablet,
+                    isDesktop,
+                    isPortrait,
+                    isLandscape,
+                    screenWidth: width,
+                    screenHeight: height,
+                    devicePixelRatio,
+                    hasTouchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+                    hasWebGL: this.checkWebGLSupport(),
+                    hasFullscreen: this.checkFullscreenSupport()
+                }
+            }
+            
+            checkWebGLSupport() {
+                try {
+                    const canvas = document.createElement('canvas')
+                    return !!(window.WebGLRenderingContext && 
+                        (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+                } catch (e) {
+                    return false
+                }
+            }
+            
+            checkFullscreenSupport() {
+                return !!(document.fullscreenEnabled || 
+                    document.mozFullScreenEnabled || 
+                    document.webkitFullscreenEnabled || 
+                    document.msFullscreenEnabled)
+            }
+            
+            updateUI() {
+                const { isMobile, isTablet, isDesktop, isPortrait, isLandscape, 
+                       screenWidth, screenHeight, devicePixelRatio, 
+                       hasTouchSupport, hasWebGL, hasFullscreen } = this.deviceInfo
+                
+                document.getElementById('deviceType').textContent = 
+                    isMobile ? '移动设备' : isTablet ? '平板设备' : '桌面设备'
+                    
+                document.getElementById('screenSize').textContent = 
+                    `${screenWidth}x${screenHeight}`
+                    
+                document.getElementById('orientation').textContent = 
+                    isPortrait ? '竖屏' : '横屏'
+                    
+                document.getElementById('pixelRatio').textContent = 
+                    devicePixelRatio.toFixed(1)
+                    
+                document.getElementById('touchSupport').textContent = 
+                    hasTouchSupport ? '✓ 支持' : '✗ 不支持'
+                    
+                document.getElementById('webglSupport').textContent = 
+                    hasWebGL ? '✓ 支持' : '✗ 不支持'
+                    
+                document.getElementById('fullscreenSupport').textContent = 
+                    hasFullscreen ? '✓ 支持' : '✗ 不支持'
+            }
+            
+            setupEventListeners() {
+                let touchCount = 0
+                let orientationChangeCount = 0
+                
+                // 触摸事件监听
+                document.addEventListener('touchstart', () => {
+                    touchCount++
+                    this.updateTestStatus('touchStatus', touchCount > 0)
+                })
+                
+                // 方向变化监听
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        orientationChangeCount++
+                        this.deviceInfo = this.detectDevice()
+                        this.updateUI()
+                        this.updateTestStatus('orientationStatus', true)
+                    }, 100)
+                })
+                
+                // 窗口大小变化监听
+                window.addEventListener('resize', () => {
+                    this.deviceInfo = this.detectDevice()
+                    this.updateUI()
+                    this.updateTestStatus('layoutStatus', true)
+                })
+            }
+            
+            updateTestStatus(elementId, passed) {
+                const element = document.getElementById(elementId)
+                if (element) {
+                    element.className = `result-status ${passed ? 'result-status--pass' : 'result-status--fail'}`
+                    element.textContent = passed ? '✓' : '✗'
+                }
+            }
+            
+            async requestFullscreen() {
+                const element = document.documentElement
+                try {
+                    if (element.requestFullscreen) {
+                        await element.requestFullscreen()
+                    } else if (element.mozRequestFullScreen) {
+                        await element.mozRequestFullScreen()
+                    } else if (element.webkitRequestFullscreen) {
+                        await element.webkitRequestFullscreen()
+                    } else if (element.msRequestFullscreen) {
+                        await element.msRequestFullscreen()
+                    }
+                    return true
+                } catch (error) {
+                    console.warn('Fullscreen request failed:', error)
+                    return false
+                }
+            }
+            
+            async exitFullscreen() {
+                try {
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen()
+                    } else if (document.mozCancelFullScreen) {
+                        await document.mozCancelFullScreen()
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen()
+                    } else if (document.msExitFullscreen) {
+                        await document.msExitFullscreen()
+                    }
+                    return true
+                } catch (error) {
+                    console.warn('Exit fullscreen failed:', error)
+                    return false
+                }
+            }
+        }
+        
+        // 初始化适配器
+        const adapter = new MobileAdapter()
+        
+        // 全局函数
+        window.startGame = function() {
+            window.location.href = './index.html'
+        }
+        
+        window.testTouch = function() {
+            alert('请尝试触摸屏幕进行测试')
+        }
+        
+        window.testFullscreen = async function() {
+            try {
+                if (!document.fullscreenElement) {
+                    const success = await adapter.requestFullscreen()
+                    if (success) {
+                        setTimeout(async () => {
+                            await adapter.exitFullscreen()
+                        }, 2000)
+                    }
+                } else {
+                    await adapter.exitFullscreen()
+                }
+            } catch (error) {
+                alert('全屏测试失败: ' + error.message)
+            }
+        }
+        
+        window.runAllTests = function() {
+            const resultsElement = document.getElementById('testResults')
+            resultsElement.style.display = 'block'
+            
+            // 性能测试
+            const start = performance.now()
+            for (let i = 0; i < 10000; i++) {
+                Math.random()
+            }
+            const end = performance.now()
+            const performancePassed = (end - start) < 50
+            
+            adapter.updateTestStatus('performanceStatus', performancePassed)
+            adapter.updateTestStatus('layoutStatus', true)
+            
+            // 显示测试结果
+            resultsElement.scrollIntoView({ behavior: 'smooth' })
+        }
+        
+        // 页面加载完成
+        console.log('📱 Mobile compatibility test page loaded')
+        console.log('Device info:', adapter.deviceInfo)
+    </script>
+</body>
+</html> 

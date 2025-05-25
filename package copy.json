@@ -1,0 +1,31 @@
+{
+  "name": "block-puzzle-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "howler": "^2.2.3",
+    "pixi.js": "^7.3.0",
+    "zustand": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-legacy": "^4.1.0",
+    "@vitest/ui": "^0.34.0",
+    "eslint": "^8.45.0",
+    "jsdom": "^22.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.0",
+    "vite": "^4.4.0",
+    "vite-plugin-pwa": "^0.16.0",
+    "vitest": "^0.34.0"
+  }
+}

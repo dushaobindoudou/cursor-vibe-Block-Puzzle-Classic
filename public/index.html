@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Block Puzzle Classic - 方块拼图经典版</title>
+  <meta name="description" content="Geek风格的俄罗斯方块拼图游戏，赛博朋克美学，HTML5+WebGL技术" />
+  <meta name="keywords" content="方块拼图,俄罗斯方块,极客游戏,WebGL游戏,TypeScript游戏" />
+  <meta name="theme-color" content="#00d4ff" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  
+  <!-- Preload important fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(45deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #ffffff;
+      font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+      overflow: hidden;
+      height: 100vh;
+    }
+    
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #00d4ff;
+      text-shadow: 0 0 10px #00d4ff;
+    }
+    
+    .loading-text {
+      font-size: 24px;
+      margin-bottom: 20px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    
+    .loading-bar {
+      width: 200px;
+      height: 4px;
+      background: #2a2a2a;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+    
+    .loading-progress {
+      height: 100%;
+      background: linear-gradient(90deg, #00d4ff, #39ff14);
+      border-radius: 2px;
+      width: 0%;
+      animation: loading 3s ease-in-out;
+    }
+    
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00d4ff; }
+      to { text-shadow: 0 0 20px #00d4ff, 0 0 30px #00d4ff; }
+    }
+    
+    @keyframes loading {
+      to { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="loading-text">INITIALIZING SYSTEM...</div>
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+  </div>
+  
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html> 

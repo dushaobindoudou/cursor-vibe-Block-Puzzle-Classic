@@ -1,0 +1,197 @@
+/* 移动端优化样式 */
+
+/* 防止移动端缩放和滚动 */
+html {
+  height: 100%;
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 移动端视口适配 */
+#app {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* 动态视口高度 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+/* 触摸优化 */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+/* 移动端响应式布局 */
+@media (max-width: 480px) {
+  /* 手机竖屏 */
+  .mobile-portrait {
+    flex-direction: column;
+  }
+  
+  .mobile-text-small {
+    font-size: 12px;
+  }
+  
+  .mobile-text-medium {
+    font-size: 14px;
+  }
+  
+  .mobile-text-large {
+    font-size: 18px;
+  }
+  
+  .mobile-padding-sm {
+    padding: 8px;
+  }
+  
+  .mobile-margin-sm {
+    margin: 4px;
+  }
+  
+  /* 游戏板适配 */
+  .game-board-mobile {
+    width: calc(100vw - 20px);
+    max-width: 360px;
+    height: calc(100vw - 20px);
+    max-height: 360px;
+  }
+  
+  /* 候选方块区域 */
+  .candidate-area-mobile {
+    height: calc(100vh - 100vw - 120px);
+    min-height: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) and (orientation: landscape) {
+  /* 手机横屏 */
+  .mobile-landscape {
+    flex-direction: row;
+  }
+  
+  .game-board-mobile-landscape {
+    width: calc(100vh - 20px);
+    max-width: 300px;
+    height: calc(100vh - 20px);
+    max-height: 300px;
+  }
+  
+  .candidate-area-mobile-landscape {
+    width: calc(100vw - 100vh - 40px);
+    min-width: 120px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  /* 平板 */
+  .tablet-text-medium {
+    font-size: 16px;
+  }
+  
+  .tablet-text-large {
+    font-size: 20px;
+  }
+  
+  .game-board-tablet {
+    width: calc(100vw - 40px);
+    max-width: 500px;
+    height: calc(100vw - 40px);
+    max-height: 500px;
+  }
+}
+
+/* 性能优化 */
+.gpu-accelerated {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -ms-perspective: 1000;
+  perspective: 1000;
+}
+
+/* 触摸反馈 */
+.touch-feedback {
+  transition: transform 0.1s ease;
+}
+
+.touch-feedback:active {
+  transform: scale(0.95);
+}
+
+/* 安全区域适配 */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* PWA 全屏模式适配 */
+@media (display-mode: standalone) {
+  body {
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+}
+
+/* 减少动画（性能优化） */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 高对比度模式适配 */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-blue: #00ffff;
+    --primary-green: #00ff00;
+    --border-color: #ffffff;
+  }
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: light) {
+  /* 如果用户偏好浅色模式，可以在这里覆盖 */
+  /* 但我们的游戏本身就是暗色主题，所以这里可能不需要改动 */
+} 

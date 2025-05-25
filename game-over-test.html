@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏结束检测测试 - 方块拼图游戏</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .test-info {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-info h2 {
+            color: #39ff14;
+            margin-top: 0;
+        }
+        
+        .test-steps {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid #39ff14;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-steps h3 {
+            color: #ffaa00;
+            margin-top: 0;
+        }
+        
+        .test-steps ol {
+            padding-left: 20px;
+        }
+        
+        .test-steps li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #39ff14;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #ffaa00;
+            font-weight: bold;
+        }
+        
+        #gameContainer {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #666666;
+            border-radius: 10px;
+            background: #000000;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            margin: 0 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 10px;
+            border: 1px solid #666666;
+        }
+        
+        .status-item {
+            display: inline-block;
+            margin: 0 20px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 游戏结束检测测试</h1>
+        
+        <div class="test-info">
+            <h2>🔍 测试目标</h2>
+            <p>验证游戏引擎能够正确检测游戏结束状态：当所有候选方块都无法放置到游戏板上时，自动触发游戏结束界面。</p>
+        </div>
+        
+        <div class="test-steps">
+            <h3>📋 测试步骤</h3>
+            <ol>
+                <li>点击"<span class="success">开始测试</span>"按钮启动游戏</li>
+                <li>选择任意游戏模式和难度</li>
+                <li>开始放置方块，<span class="warning">故意让游戏板变得拥挤</span></li>
+                <li>当候选方块无法放置时，应该<span class="highlight">自动弹出游戏结束界面</span></li>
+                <li>验证游戏结束界面显示：
+                    <ul>
+                        <li>最终分数</li>
+                        <li>游戏模式</li>
+                        <li>最高连击（如果有）</li>
+                        <li>重新开始和返回主菜单按钮</li>
+                    </ul>
+                </li>
+                <li>测试按钮功能是否正常</li>
+            </ol>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="startTest()">🚀 开始测试</button>
+            <button class="btn" onclick="resetTest()">🔄 重置测试</button>
+            <button class="btn" onclick="fillBoard()">⚡ 快速填充游戏板</button>
+        </div>
+        
+        <div class="status">
+            <div class="status-item">
+                <strong>测试状态:</strong> <span id="testStatus">等待开始</span>
+            </div>
+            <div class="status-item">
+                <strong>游戏状态:</strong> <span id="gameStatus">未开始</span>
+            </div>
+            <div class="status-item">
+                <strong>候选方块:</strong> <span id="candidateCount">0</span>
+            </div>
+        </div>
+        
+        <canvas id="gameContainer"></canvas>
+        
+        <div class="test-info">
+            <h2>✅ 预期结果</h2>
+            <ul>
+                <li><span class="success">自动检测：</span>当所有候选方块都无法放置时，游戏自动结束</li>
+                <li><span class="success">界面显示：</span>弹出游戏结束界面，显示完整的游戏统计信息</li>
+                <li><span class="success">按钮功能：</span>重新开始和返回主菜单按钮正常工作</li>
+                <li><span class="success">状态管理：</span>游戏状态正确设置为已结束</li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+        import { GameApp } from './src/app.js'
+        
+        let gameApp = null
+        let testStarted = false
+        
+        window.startTest = function() {
+            if (testStarted) {
+                console.log('测试已经开始')
+                return
+            }
+            
+            testStarted = true
+            updateStatus('testStatus', '正在初始化...')
+            updateStatus('gameStatus', '初始化中')
+            
+            try {
+                // 创建游戏应用
+                gameApp = new GameApp()
+                
+                // 初始化游戏
+                const canvas = document.getElementById('gameContainer')
+                gameApp.init(canvas, 1024, 600)
+                
+                // 设置全局引用
+                window.gameApp = gameApp
+                
+                updateStatus('testStatus', '测试进行中')
+                updateStatus('gameStatus', '等待模式选择')
+                
+                // 监听游戏状态变化
+                monitorGameState()
+                
+                console.log('🎮 游戏结束检测测试已启动')
+                console.log('📝 请选择游戏模式和难度开始测试')
+                
+            } catch (error) {
+                console.error('❌ 测试启动失败:', error)
+                updateStatus('testStatus', '启动失败')
+                updateStatus('gameStatus', '错误')
+            }
+        }
+        
+        window.resetTest = function() {
+            if (gameApp) {
+                gameApp.destroy()
+                gameApp = null
+            }
+            testStarted = false
+            updateStatus('testStatus', '已重置')
+            updateStatus('gameStatus', '未开始')
+            updateStatus('candidateCount', '0')
+            
+            // 清空画布
+            const canvas = document.getElementById('gameContainer')
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+            }
+            
+            console.log('🔄 测试已重置')
+        }
+        
+        window.fillBoard = function() {
+            if (!gameApp || !gameApp.gameEngine || !gameApp.gameEngine.gameState) {
+                console.log('⚠️ 游戏未开始，无法填充游戏板')
+                return
+            }
+            
+            const gameState = gameApp.gameEngine.gameState
+            const board = gameState.board
+            
+            // 填充大部分游戏板，留下一些不规则的空隙
+            for (let y = 0; y < board.height; y++) {
+                for (let x = 0; x < board.width; x++) {
+                    // 随机填充约80%的格子，创造不规则的空隙
+                    if (Math.random() < 0.8) {
+                        board.grid[y][x] = 1 // FILLED
+                    }
+                }
+            }
+            
+            // 更新游戏显示
+            if (gameApp.sceneManager) {
+                gameApp.sceneManager.setGameState(gameState)
+            }
+            
+            console.log('⚡ 游戏板已快速填充，候选方块应该很快无法放置')
+            updateStatus('gameStatus', '游戏板已填充')
+        }
+        
+        function updateStatus(elementId, text) {
+            const element = document.getElementById(elementId)
+            if (element) {
+                element.textContent = text
+            }
+        }
+        
+        function monitorGameState() {
+            setInterval(() => {
+                if (gameApp && gameApp.gameEngine && gameApp.gameEngine.gameState) {
+                    const gameState = gameApp.gameEngine.gameState
+                    
+                    // 更新候选方块数量
+                    updateStatus('candidateCount', gameState.candidateBlocks.length)
+                    
+                    // 更新游戏状态
+                    if (gameState.isGameOver) {
+                        updateStatus('gameStatus', '游戏结束')
+                        updateStatus('testStatus', '测试完成 - 游戏结束检测成功！')
+                    } else if (gameState.candidateBlocks.length > 0) {
+                        updateStatus('gameStatus', '游戏进行中')
+                    }
+                }
+            }, 500)
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🔧 游戏结束检测测试页面已加载')
+            console.log('📋 点击"开始测试"按钮开始验证游戏结束检测功能')
+        })
+    </script>
+</body>
+</html> 

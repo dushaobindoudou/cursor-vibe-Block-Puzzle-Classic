@@ -1,0 +1,38 @@
+{
+  "name": "block-puzzle-game",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Geek-style Tetris puzzle game with HTML5 + WebGL",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\""
+  },
+  "keywords": ["game", "puzzle", "tetris", "webgl", "typescript"],
+  "author": "Game Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "howler": "^2.2.4",
+    "pixi.js": "^7.4.3",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.50",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitejs/plugin-legacy": "^4.1.1",
+    "@vitest/ui": "^0.34.7",
+    "eslint": "^8.57.1",
+    "jsdom": "^22.1.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "vite": "^4.5.14",
+    "vite-plugin-pwa": "^0.16.7",
+    "vitest": "^0.34.6"
+  }
+} 

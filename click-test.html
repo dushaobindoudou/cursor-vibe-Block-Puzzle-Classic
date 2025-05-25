@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>点击事件修复测试</title>
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #00d4ff;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .test-section {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .test-title {
+            color: #39ff14;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .test-area {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            border: 2px solid #666;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+        }
+        .test-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: 3px solid #fff;
+            border-radius: 25px;
+            padding: 15px 30px;
+            color: white;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .test-button:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+        .test-button:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+        .click-log {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .log-button {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+        .log-background {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+        .bug-demo .background {
+            cursor: pointer;
+        }
+        .fixed-demo .background {
+            cursor: default;
+            pointer-events: none;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-bug {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+        .status-fixed {
+            background: rgba(57, 255, 20, 0.2);
+            color: #39ff14;
+            border: 1px solid #39ff14;
+        }
+        .explanation {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .fix-highlight {
+            background: rgba(57, 255, 20, 0.2);
+            color: #39ff14;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 点击事件修复测试</h1>
+        
+        <div class="test-section">
+            <div class="test-title">
+                ❌ Bug演示：背景也能触发点击
+                <span class="status-indicator status-bug">BUG</span>
+            </div>
+            <div class="test-area bug-demo">
+                <div class="background" id="bugBackground"></div>
+                <button class="test-button" id="bugButton">点击我</button>
+            </div>
+            <div class="click-log" id="bugLog">
+                <div style="color: #cccccc; text-align: center;">点击测试区域任意位置查看事件...</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">
+                ✅ 修复后：只有按钮能触发点击
+                <span class="status-indicator status-fixed">FIXED</span>
+            </div>
+            <div class="test-area fixed-demo">
+                <div class="background" id="fixedBackground"></div>
+                <button class="test-button" id="fixedButton">点击我</button>
+            </div>
+            <div class="click-log" id="fixedLog">
+                <div style="color: #cccccc; text-align: center;">点击测试区域任意位置查看事件...</div>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h3 style="color: #00d4ff;">🔧 修复说明</h3>
+            <p>问题原因：背景Graphics对象没有明确设置交互状态，在某些情况下会意外响应点击事件。</p>
+            
+            <h4 style="color: #39ff14;">修复方法：</h4>
+            <div class="code-snippet">
+// 修复前 - 背景可能响应点击
+const background = new Graphics()
+background.beginFill(0x0a0a0a, 0.95)
+background.drawRect(0, 0, width, height)
+background.endFill()
+container.addChild(background)
+
+// 修复后 - 明确设置背景不可交互
+const background = new Graphics()
+background.beginFill(0x0a0a0a, 0.95)
+background.drawRect(0, 0, width, height)
+background.endFill()
+<span class="fix-highlight">background.interactive = false
+background.interactiveChildren = false</span>
+container.addChild(background)
+            </div>
+            
+            <h4 style="color: #39ff14;">修复位置：</h4>
+            <ul>
+                <li>🎮 <strong>GameModeSelectUI.ts</strong> - 游戏模式选择界面背景</li>
+                <li>⚙️ <strong>DifficultySelectUI.ts</strong> - 难度选择界面背景</li>
+                <li>🏆 <strong>LevelCompleteUI.ts</strong> - 关卡完成界面背景</li>
+                <li>🏠 <strong>SceneManager.ts</strong> - 主界面和游戏界面背景</li>
+                <li>⏰ <strong>TimerOptions叠加层</strong> - 限时模式选择背景</li>
+            </ul>
+            
+            <p style="color: #39ff14;">
+                <strong>结果：</strong> 现在只有按钮和交互元素会响应点击，背景区域点击不会误触发事件。
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Bug演示 - 背景也能点击
+        const bugBackground = document.getElementById('bugBackground');
+        const bugButton = document.getElementById('bugButton');
+        const bugLog = document.getElementById('bugLog');
+        
+        function logBugEvent(source, event) {
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${source}`;
+            entry.innerHTML = `[${time}] ${source === 'button' ? '🎯 按钮' : '🚫 背景'}被点击 - ${event.target.tagName}`;
+            bugLog.appendChild(entry);
+            bugLog.scrollTop = bugLog.scrollHeight;
+        }
+        
+        bugBackground.addEventListener('click', (e) => {
+            logBugEvent('background', e);
+        });
+        
+        bugButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            logBugEvent('button', e);
+        });
+        
+        // 修复演示 - 只有按钮能点击
+        const fixedBackground = document.getElementById('fixedBackground');
+        const fixedButton = document.getElementById('fixedButton');
+        const fixedLog = document.getElementById('fixedLog');
+        
+        function logFixedEvent(source, event) {
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${source}`;
+            entry.innerHTML = `[${time}] ${source === 'button' ? '✅ 按钮' : '❌ 背景'}被点击 - ${event.target.tagName}`;
+            fixedLog.appendChild(entry);
+            fixedLog.scrollTop = fixedLog.scrollHeight;
+        }
+        
+        // 背景不会响应点击（pointer-events: none）
+        fixedButton.addEventListener('click', (e) => {
+            logFixedEvent('button', e);
+        });
+        
+        // 清空日志的功能
+        function clearLogs() {
+            bugLog.innerHTML = '<div style="color: #cccccc; text-align: center;">日志已清空...</div>';
+            fixedLog.innerHTML = '<div style="color: #cccccc; text-align: center;">日志已清空...</div>';
+        }
+        
+        // 双击清空日志
+        bugLog.addEventListener('dblclick', clearLogs);
+        fixedLog.addEventListener('dblclick', clearLogs);
+    </script>
+</body>
+</html> 
