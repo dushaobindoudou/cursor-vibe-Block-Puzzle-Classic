@@ -101,7 +101,6 @@ export class LevelCompleteUI {
     yPos += 40
 
     // 星级显示
-    const starContainer = new Container()
     const starText = '⭐'.repeat(data.stars) + '☆'.repeat(3 - data.stars)
     const starsDisplay = new Text(starText, {
       fontFamily: 'Arial',

@@ -9,50 +9,50 @@ importers:
   .:
     dependencies:
       howler:
-        specifier: ^2.2.3
+        specifier: ^2.2.4
         version: 2.2.4
       pixi.js:
-        specifier: ^7.3.0
+        specifier: ^7.4.3
         version: 7.4.3
       zustand:
-        specifier: ^4.4.0
+        specifier: ^4.5.7
         version: 4.5.7(react@19.1.0)
     devDependencies:
       '@types/node':
-        specifier: ^20.0.0
+        specifier: ^20.17.50
         version: 20.17.50
       '@typescript-eslint/eslint-plugin':
-        specifier: ^6.0.0
+        specifier: ^6.21.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3)
       '@typescript-eslint/parser':
-        specifier: ^6.0.0
+        specifier: ^6.21.0
         version: 6.21.0(eslint@8.57.1)(typescript@5.8.3)
       '@vitejs/plugin-legacy':
-        specifier: ^4.1.0
+        specifier: ^4.1.1
         version: 4.1.1(terser@5.39.2)(vite@4.5.14(@types/node@20.17.50)(terser@5.39.2))
       '@vitest/ui':
-        specifier: ^0.34.0
+        specifier: ^0.34.7
         version: 0.34.7(vitest@0.34.6)
       eslint:
-        specifier: ^8.45.0
+        specifier: ^8.57.1
         version: 8.57.1
       jsdom:
-        specifier: ^22.0.0
+        specifier: ^22.1.0
         version: 22.1.0
       prettier:
-        specifier: ^3.0.0
+        specifier: ^3.5.3
         version: 3.5.3
       typescript:
-        specifier: ^5.1.0
+        specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^4.4.0
+        specifier: ^4.5.14
         version: 4.5.14(@types/node@20.17.50)(terser@5.39.2)
       vite-plugin-pwa:
-        specifier: ^0.16.0
+        specifier: ^0.16.7
         version: 0.16.7(vite@4.5.14(@types/node@20.17.50)(terser@5.39.2))(workbox-build@7.3.0)(workbox-window@7.3.0)
       vitest:
-        specifier: ^0.34.0
+        specifier: ^0.34.6
         version: 0.34.6(@vitest/ui@0.34.7)(jsdom@22.1.0)(terser@5.39.2)
 
 packages:

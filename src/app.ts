@@ -295,7 +295,7 @@ export class GameApp {
     }
   }
 
-  private handleMouseMove(x: number, y: number): void {
+  private handleMouseMove(_x: number, _y: number): void {
     // 可以在这里添加鼠标悬停效果
     // 为了避免过多的日志，这里不打印鼠标移动
   }

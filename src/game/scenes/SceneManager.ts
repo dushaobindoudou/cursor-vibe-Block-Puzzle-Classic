@@ -2,7 +2,7 @@ import { Container, Graphics, Text, Point } from 'pixi.js'
 import { GameState, Block, GameMode } from '@/types/game'
 import { DragManager, DragManagerCallbacks } from '../interaction/DragManager'
 import { GameModeSelectUI } from '../ui/GameModeSelectUI'
-import { LevelSelectUI } from '../ui/LevelSelectUI'
+// import { LevelSelectUI } from '../ui/LevelSelectUI' // Will be used later
 import { LevelCompleteUI, LevelCompleteData } from '../ui/LevelCompleteUI'
 import { GameOverUI, GameOverData } from '../ui/GameOverUI'
 import { DifficultySelectUI, DifficultyOption } from '../ui/DifficultySelectUI'
@@ -21,7 +21,7 @@ export class SceneManager {
   private _scoreText: Text | null = null
   private _dragManager: DragManager | null = null
   private _gameModeSelectUI: GameModeSelectUI | null = null
-  private _levelSelectUI: LevelSelectUI | null = null
+  // Note: Level selection will be implemented in future versions
   private _levelCompleteUI: LevelCompleteUI | null = null
   private _gameOverUI: GameOverUI | null = null
   private _difficultySelectUI: DifficultySelectUI | null = null
@@ -156,7 +156,7 @@ export class SceneManager {
     this.drawGrid(gameAreaBg, gameAreaWidth, gameAreaHeight, cellSize)
 
     // 游戏模式按钮
-    const modeButton = this.createEnhancedButton('🚀 选择模式开始游戏', centerX, Math.min(this._screenHeight - 100, gameAreaBg.y + gameAreaHeight + 30), 0x00d4ff, () => {
+    const modeButton = this.createEnhancedButton('🚀 开始游戏', centerX, Math.min(this._screenHeight - 100, gameAreaBg.y + gameAreaHeight + 30), 0x00d4ff, () => {
       this.showGameModeSelect()
     })
     scene.addChild(modeButton)
@@ -296,7 +296,8 @@ export class SceneManager {
     const fontSize = layoutConfig ? layoutConfig.fontSize : { small: 16, medium: 18, large: 24 }
     const spacing = layoutConfig ? layoutConfig.spacing : { small: 10, medium: 15, large: 20 }
 
-    // 关卡和分数显示
+    // 关卡和分数显示 - 顶部一行
+    const topY = spacing.medium
     const levelText = new Text('Level: 1', {
       fontFamily: 'JetBrains Mono, monospace',
       fontSize: fontSize.medium,
@@ -305,7 +306,7 @@ export class SceneManager {
     })
     levelText.anchor.set(0.5, 0)
     levelText.x = centerX - 100
-    levelText.y = spacing.medium
+    levelText.y = topY
     scene.addChild(levelText)
 
     this._scoreText = new Text('Score: 0 / 50', {
@@ -316,11 +317,12 @@ export class SceneManager {
     })
     this._scoreText.anchor.set(0.5, 0)
     this._scoreText.x = centerX + 100
-    this._scoreText.y = spacing.medium
+    this._scoreText.y = topY
     scene.addChild(this._scoreText)
 
-    // 游戏模式和难度显示
-    this.createGameModeDisplay(scene, centerX, spacing.medium + fontSize.medium + spacing.small)
+    // 游戏模式和难度显示 - 第二行，增加更多向下间距
+    const settingsY = topY + fontSize.medium + spacing.large * 2
+    this.createGameModeDisplay(scene, centerX, settingsY)
 
     // 游戏板配置
     let cellSize: number
@@ -338,13 +340,15 @@ export class SceneManager {
       boardHeight = cellSize * 10
     }
     
+    // 游戏板位置 - 确保在设置显示下方有足够间距
+    const gameBoardY = settingsY + 50 + spacing.medium  // 50是设置显示的高度(40) + 一些边距
     this._gameBoard = new Graphics()
     this._gameBoard.x = centerX - boardWidth / 2
-    this._gameBoard.y = spacing.large * 3 + fontSize.medium * 2  // 适应移动端的Y位置
+    this._gameBoard.y = gameBoardY
     this.drawGameBoard(this._gameBoard, boardWidth, boardHeight, cellSize)
     scene.addChild(this._gameBoard)
 
-    // 候选方块区域
+    // 候选方块区域 - 确保有足够间距
     this._candidateArea = new Container()
     
     if (layoutConfig && layoutConfig.candidateArea.direction === 'column') {
@@ -352,9 +356,9 @@ export class SceneManager {
       this._candidateArea.x = this._gameBoard.x + boardWidth + spacing.medium
       this._candidateArea.y = this._gameBoard.y
     } else {
-      // 竖屏布局：候选方块在下方
+      // 竖屏布局：候选方块在下方，增加更多间距向下移动
       this._candidateArea.x = centerX
-      this._candidateArea.y = this._gameBoard.y + boardHeight + spacing.medium
+      this._candidateArea.y = this._gameBoard.y + boardHeight + spacing.large * 3
     }
     
     this.createCandidateArea(this._candidateArea, cellSize)
@@ -536,40 +540,7 @@ export class SceneManager {
     this._gameOverUI.show(data)
   }
 
-  private createButton(text: string, x: number, y: number, onClick: () => void): Container {
-    const button = new Container()
-    button.x = x
-    button.y = y
 
-    const bg = new Graphics()
-    bg.beginFill(0x00d4ff, 0.8)
-    bg.lineStyle(2, 0xffffff, 0.8)
-    bg.drawRoundedRect(-80, -20, 160, 40, 20)
-    bg.endFill()
-    button.addChild(bg)
-
-    const buttonText = new Text(text, {
-      fontFamily: 'JetBrains Mono, monospace',
-      fontSize: 16,
-      fill: 0xffffff,
-      align: 'center'
-    })
-    buttonText.anchor.set(0.5)
-    button.addChild(buttonText)
-
-    button.interactive = true
-    button.cursor = 'pointer'
-    
-    button.on('pointerdown', onClick)
-    button.on('pointerover', () => {
-      bg.tint = 0xdddddd
-    })
-    button.on('pointerout', () => {
-      bg.tint = 0xffffff
-    })
-
-    return button
-  }
 
   private createEnhancedButton(text: string, x: number, y: number, color: number, onClick: () => void): Container {
     const button = new Container()
@@ -749,12 +720,12 @@ export class SceneManager {
     title.anchor.set(0.5)
     
     // 候选方块槽位配置
-    const slotSize = cellSize * 3.5  // 稍微调整槽位大小
+    const slotSize = cellSize * 3.0  // 调整槽位大小，与方块更好匹配
     
     if (layoutConfig && layoutConfig.candidateArea.direction === 'column') {
       // 横屏布局：垂直排列
       title.x = 0
-      title.y = -spacing.large
+      title.y = -spacing.large - fontSize.medium / 2  // 调整标题位置，避免与槽位重叠
       container.addChild(title)
       
       for (let i = 0; i < 3; i++) {
@@ -771,13 +742,13 @@ export class SceneManager {
     } else {
       // 竖屏布局：水平排列
       title.x = 0
-      title.y = -spacing.large
+      title.y = -spacing.large - fontSize.medium / 2  // 调整标题位置，避免与槽位重叠
       container.addChild(title)
 
       for (let i = 0; i < 3; i++) {
         const slotX = (i - 1) * (slotSize + spacing.medium)
         
-        // 槽位背景
+        // 槽位背景 - Y位置与方块位置对齐
         const slot = new Graphics()
         slot.lineStyle(1, 0x666666, 0.8)
         slot.beginFill(0x2a2a2a, 0.5)
@@ -815,8 +786,15 @@ export class SceneManager {
       this._scoreText.text = `Score: ${score}`
     }
 
-    // 重绘游戏板
-    const cellSize = Math.min(35, Math.min(this._screenWidth, this._screenHeight) / 20)
+    // 使用与创建时相同的cellSize计算逻辑
+    const layoutConfig = this._mobileLayoutConfig
+    let cellSize: number
+    if (layoutConfig) {
+      cellSize = layoutConfig.cellSize
+    } else {
+      cellSize = Math.min(35, Math.min(this._screenWidth, this._screenHeight) / 20)
+    }
+    
     const boardWidth = cellSize * 10
     const boardHeight = cellSize * 10
     
@@ -855,7 +833,7 @@ export class SceneManager {
 
     const layoutConfig = this._mobileLayoutConfig
     const spacing = layoutConfig ? layoutConfig.spacing : { small: 10, medium: 15, large: 20 }
-    const slotSize = cellSize * 3.5
+    const slotSize = cellSize * 3.0  // 与createCandidateArea保持一致
 
     // 绘制新的候选方块
     this._gameState.candidateBlocks.forEach((block, index) => {
@@ -869,7 +847,7 @@ export class SceneManager {
         } else {
           // 竖屏布局：水平排列
           slotX = (index - 1) * (slotSize + spacing.medium)
-          slotY = slotSize / 2
+          slotY = slotSize / 2  // 槽位中心位置
         }
         
         this.drawCandidateBlock(container, block, slotX, slotY, cellSize)
@@ -923,20 +901,26 @@ export class SceneManager {
     const blockContainer = new Container()
     blockContainer.name = 'candidateBlock'
     
+    // 设置容器位置为槽位中心
+    blockContainer.x = centerX
+    blockContainer.y = centerY
+    
     const pattern = block.shape.pattern
     const patternWidth = pattern[0].length
     const patternHeight = pattern.length
     
-    // 计算方块的实际绘制位置（居中）
-    const blockWidth = patternWidth * cellSize * 0.8  // 稍微缩小以适应槽位
-    const blockHeight = patternHeight * cellSize * 0.8
-    const startX = centerX - blockWidth / 2
-    const startY = centerY - blockHeight / 2
+    // 计算方块的绘制大小 
+    const cellDisplaySize = cellSize * 0.6  // 适当缩小以适应槽位
+    const blockWidth = patternWidth * cellDisplaySize
+    const blockHeight = patternHeight * cellDisplaySize
+    
+    // 计算起始位置（相对于容器中心）
+    const startX = -blockWidth / 2
+    const startY = -blockHeight / 2
 
     const blockGraphics = new Graphics()
     
-    // 绘制方块
-    const cellDisplaySize = cellSize * 0.8
+    // 绘制方块（相对于容器坐标系）
     for (let y = 0; y < patternHeight; y++) {
       for (let x = 0; x < patternWidth; x++) {
         if (pattern[y][x] === 1) {
@@ -971,6 +955,8 @@ export class SceneManager {
         this._dragManager.startDrag(block, new Point(globalPos.x, globalPos.y))
       }
     })
+    
+    // 调试边框已移除 - 位置调整完成后不再需要
     
     container.addChild(blockContainer)
   }
@@ -1109,45 +1095,36 @@ export class SceneManager {
     gameModeDisplay.x = x
     gameModeDisplay.y = y
 
-    // 背景
+    // 背景 - 更紧凑的高度
     const gameModeBg = new Graphics()
     gameModeBg.beginFill(0x1a1a1a, 0.7)
     gameModeBg.lineStyle(1, 0x333333, 0.8)
-    gameModeBg.drawRoundedRect(-180, -35, 360, 70, 10)
+    gameModeBg.drawRoundedRect(-180, -20, 360, 40, 8)
     gameModeBg.endFill()
     gameModeDisplay.addChild(gameModeBg)
 
-    // 标题
-    const titleText = new Text('当前设置', {
-      fontFamily: 'JetBrains Mono, monospace',
-      fontSize: Math.min(14, this._screenWidth / 70),
-      fill: 0xcccccc,
-      align: 'center'
-    })
-    titleText.anchor.set(0.5)
-    titleText.y = -25
-    gameModeDisplay.addChild(titleText)
-
-    // 模式显示
+    // 左侧模式显示
     const currentModeText = new Text(`模式: ${modeText}`, {
       fontFamily: 'JetBrains Mono, monospace',
-      fontSize: Math.min(12, this._screenWidth / 80),
+      fontSize: Math.min(11, this._screenWidth / 85),
       fill: modeColor,
       align: 'center'
     })
     currentModeText.anchor.set(0.5)
-    currentModeText.y = -8
+    currentModeText.x = -90
+    currentModeText.y = 0
     gameModeDisplay.addChild(currentModeText)
 
-    // 难度显示
+    // 右侧难度显示
     const currentDifficultyText = new Text(`难度: ${difficultyText}`, {
       fontFamily: 'JetBrains Mono, monospace',
-      fontSize: Math.min(12, this._screenWidth / 80),
+      fontSize: Math.min(11, this._screenWidth / 85),
       fill: difficultyColor,
       align: 'center'
     })
     currentDifficultyText.anchor.set(0.5)
-    currentDifficultyText.y = 8
+    currentDifficultyText.x = 90
+    currentDifficultyText.y = 0
     gameModeDisplay.addChild(currentDifficultyText)
 
     container.addChild(gameModeDisplay)

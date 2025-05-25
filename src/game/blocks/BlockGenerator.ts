@@ -1,4 +1,4 @@
-import { Block, BlockShape } from '@/types/game'
+import { Block } from '@/types/game'
 import { BlockShapes } from './BlockShapes'
 
 export class BlockGenerator {

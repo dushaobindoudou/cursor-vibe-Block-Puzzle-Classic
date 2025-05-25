@@ -11,8 +11,7 @@ export class EffectManager {
   private _effectLayer: Container
   private _gameBoard: Container | null = null
   private _cellSize: number = 35
-  private _boardX: number = 0
-  private _boardY: number = 0
+  // Note: Board position stored in setGameBoard method
 
   constructor(stage: Container) {
     this._stage = stage
@@ -21,11 +20,10 @@ export class EffectManager {
     this._stage.addChild(this._effectLayer)
   }
 
-  setGameBoard(gameBoard: Container, cellSize: number, boardX: number, boardY: number): void {
+  setGameBoard(gameBoard: Container, cellSize: number, _boardX: number, _boardY: number): void {
     this._gameBoard = gameBoard
     this._cellSize = cellSize
-    this._boardX = boardX
-    this._boardY = boardY
+    // Board position is implicitly stored in the gameBoard container
   }
 
   // 播放消除动画

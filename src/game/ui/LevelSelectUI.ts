@@ -1,5 +1,5 @@
 import { Container, Graphics, Text } from 'pixi.js'
-import { LevelManager, LevelProgress } from '../levels/LevelManager'
+import { LevelManager } from '../levels/LevelManager'
 
 export class LevelSelectUI {
   private _container: Container
